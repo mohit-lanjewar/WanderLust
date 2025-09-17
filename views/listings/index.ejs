@@ -1,0 +1,115 @@
+<% layout("/layouts/boilerplate") %>
+
+<style>
+    #filters {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .filter {
+        text-align: center;
+        margin-right: 2rem;
+        margin-top: 2rem;
+        opacity: 0.7;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .filter:hover {
+        opacity: 1;
+        cursor: pointer;
+    }
+
+    .filter p {
+        font-size: 0.8rem;
+    }
+
+    .active-filter {
+        opacity: 1 !important;
+        border-bottom: 2px solid black;
+    }
+
+    .tax-info {
+        display: none;
+    }
+
+    .tax-toggle {
+        border: 1px solid black;
+        border-radius: 1rem;
+        height: 3.25rem;
+        padding: 1rem;
+        margin-left: 2rem;
+        display: flex;
+        align-items: center;
+    }
+</style>
+
+<div id="filters">
+    <% const categories = ["Trending","Rooms","Iconic Cities","Mountains","Castles","Amazing Pools","Camping","Farms","Arctic","Domes","Boats"]; %>
+
+    <a href="/listings?<%= search ? `search=${search}` : '' %>" class="filter <%= !category ? 'active-filter' : '' %>">
+        <div><i class="fa-solid fa-globe"></i></div>
+        <p>All</p>
+    </a>
+
+    <% for (let cat of categories) { %>
+        <a href="/listings?category=<%= cat %><%= search ? `&search=${search}` : '' %>" class="filter <%= category === cat ? 'active-filter' : '' %>">
+            <div>
+                <% if(cat === "Trending"){ %><i class="fa-solid fa-fire"></i><% } %>
+                <% if(cat === "Rooms"){ %><i class="fa-solid fa-bed"></i><% } %>
+                <% if(cat === "Iconic Cities"){ %><i class="fa-solid fa-mountain-city"></i><% } %>
+                <% if(cat === "Mountains"){ %><i class="fa-solid fa-mountain"></i><% } %>
+                <% if(cat === "Castles"){ %><i class="fa-brands fa-fort-awesome"></i><% } %>
+                <% if(cat === "Amazing Pools"){ %><i class="fa-solid fa-person-swimming"></i><% } %>
+                <% if(cat === "Camping"){ %><i class="fa-solid fa-campground"></i><% } %>
+                <% if(cat === "Farms"){ %><i class="fa-solid fa-tractor"></i><% } %>
+                <% if(cat === "Arctic"){ %><i class="fa-solid fa-snowflake"></i><% } %>
+                <% if(cat === "Domes"){ %><i class="fa-solid fa-igloo"></i><% } %>
+                <% if(cat === "Boats"){ %><i class="fa-solid fa-ship"></i><% } %>
+            </div>
+            <p><%= cat %></p>
+        </a>
+    <% } %>
+
+    <div class="tax-toggle">
+        <div class="form-check-reverse form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
+            <label class="form-check-label" for="switchCheckDefault">Display total after Taxes</label>
+        </div>
+    </div>
+</div>
+
+<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
+    <% if (allListings.length === 0) { %>
+        <div class="col-12 text-center mt-5">
+            <h5>No listings found<%= category ? ' in ' + category : '' %><%= search ? ' matching "' + search + '"' : '' %></h5>
+        </div>
+    <% } %>
+
+    <% for (let listing of allListings) { %>
+        <a href="/listings/<%= listing._id %>" class="listing-links">
+            <div class="card col listing-card">
+                <img src="<%= listing.image.url %>" class="card-img-top" alt="listing_image" style="height: 20rem;">
+                <div class="card-img-overlay"></div>
+                <div class="card-body">
+                    <p class="card-text">
+                        <b><%= listing.title %></b> <br>
+                        &#8377;<%= listing.price.toLocaleString("en-IN") %> /night
+                        <i class="tax-info">&nbsp; &nbsp; +18% GST</i>
+                    </p>
+                </div>
+            </div>
+        </a>
+    <% } %>
+</div>
+
+<script>
+    let taxSwitch = document.getElementById("switchCheckDefault");
+    taxSwitch.addEventListener("click", () => {
+        let taxInfo = document.getElementsByClassName("tax-info");
+        for (info of taxInfo){
+            info.style.display = (info.style.display !== "inline") ? "inline" : "none";
+        }
+    });
+</script>
