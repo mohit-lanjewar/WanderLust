@@ -82,8 +82,9 @@ app.use("/", userRouter);
 
 /* ---------------- ERROR HANDLER ---------------- */
 app.use((err, req, res, next) => {
-    const { statusCode = 500, message = "Something went wrong" } = err;
-    res.status(statusCode).render("error.ejs", { message });
+    const statusCode = err.statusCode || 500;
+    const message = err.message || "Something went wrong";
+    res.status(statusCode).render("error.ejs", { statusCode, message });
 });
 
 /* ---------------- SERVER ---------------- */
@@ -91,3 +92,4 @@ const port = process.env.PORT || 8080;
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
+
